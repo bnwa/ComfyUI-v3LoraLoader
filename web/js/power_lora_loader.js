@@ -73,6 +73,13 @@ function pointInBounds(pos, bounds) {
   return pos[0] >= x && pos[0] <= x + w;
 }
 
+// The height a LoRA row reserves for itself (used for both layout via
+// computeSize() and for drawing). Kept slightly taller than the standard
+// widget row so the toggle/picker/strength fields have breathing room.
+function rowHeight() {
+  return (LiteGraph.NODE_WIDGET_HEIGHT || 20) + 6;
+}
+
 /**
  * A single "LoRA row": a coupled toggle + LoRA picker + strength widget(s) +
  * remove button, drawn and hit-tested as one custom LiteGraph widget.
@@ -101,17 +108,22 @@ class PowerLoraRowWidget {
   }
 
   computeSize(width) {
-    return [width, (LiteGraph.NODE_WIDGET_HEIGHT || 20) + 6];
+    return [width, rowHeight()];
   }
 
-  draw(ctx, node, widgetWidth, posY, height) {
+  draw(ctx, node, widgetWidth, posY /*, height -- ignored, see rowHeight() */) {
+    // LiteGraph always passes the constant NODE_WIDGET_HEIGHT here rather
+    // than the height our own computeSize() reserved, so we use our own
+    // constant instead. Otherwise our drawn content only fills part of the
+    // vertical space actually reserved between rows, leaving a visible gap.
+    const height = rowHeight();
     const margin = 10;
     const inner = 6;
     const midY = posY + height / 2;
 
     ctx.save();
 
-    roundRect(ctx, margin, posY + 1, widgetWidth - margin * 2, height - 2, 6);
+    roundRect(ctx, margin, posY, widgetWidth - margin * 2, height, 6);
     ctx.fillStyle = LiteGraph.WIDGET_BGCOLOR || "#222";
     ctx.fill();
 
