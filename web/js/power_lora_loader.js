@@ -275,9 +275,8 @@ function setupPowerLoraLoaderNode(nodeType, hasClipStrength) {
   };
 
   nodeType.prototype.removeLoraRow = function (widget) {
-    const index = this.widgets ? this.widgets.indexOf(widget) : -1;
-    if (index > -1) {
-      this.widgets.splice(index, 1);
+    if (this.widgets && this.widgets.includes(widget)) {
+      this.removeWidget(widget);
     }
     // Unlike growing, removing a row should shrink the node back down.
     const computed = this.computeSize();
@@ -319,7 +318,7 @@ function setupPowerLoraLoaderNode(nodeType, hasClipStrength) {
     // deserialization and node copy/paste, since both funnel through
     // configure() with a full snapshot of widgets_values.
     while (this.widgets && this.widgets.length) {
-      this.removeWidget(0);
+      this.removeWidget(this.widgets[0]);
     }
     this._loraRowCounter = 0;
 
