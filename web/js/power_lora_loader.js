@@ -328,14 +328,17 @@ function setupPowerLoraLoaderNode(nodeType, hasClipStrength) {
 
     // origConfigure restores `this.size` from the serialized node, but its
     // widget-restoration pass was a no-op above since `this.widgets` was
-    // empty; rebuild the LoRA rows and button now that state is restored.
+    // empty; rebuild the button and LoRA rows now that state is restored.
+    // The button must come first so restored rows land below it, matching
+    // where newly-added rows go.
+    this._addAddLoraButton();
+
     const savedValues = (info && info.widgets_values) || [];
     for (const value of savedValues) {
       if (isLoraRowValue(value)) {
         this.addLoraRow(value);
       }
     }
-    this._addAddLoraButton();
 
     this._resizeForWidgets();
     this.setDirtyCanvas(true, true);
